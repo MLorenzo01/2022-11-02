@@ -5,9 +5,13 @@
 package it.polito.tdp.itunes;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.util.TreeMap;
 
+import it.polito.tdp.itunes.model.Genre;
 import it.polito.tdp.itunes.model.Model;
+import it.polito.tdp.itunes.model.Track;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -32,7 +36,7 @@ public class FXMLController {
     private Button btnPlaylist; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbGenere"
-    private ComboBox<?> cmbGenere; // Value injected by FXMLLoader
+    private ComboBox<Genre> cmbGenere; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtDTOT"
     private TextField txtDTOT; // Value injected by FXMLLoader
@@ -48,12 +52,22 @@ public class FXMLController {
 
     @FXML
     void doCalcolaPlaylist(ActionEvent event) {
-
+    	ArrayList<Track> lista = model.trovaMaggiore(Integer.parseInt(txtDTOT.getText()));
+    	TreeMap<Integer, Track> map = model.map();
+    	for(Track t: lista) {
+    		Track t1 = map.get(t.getTrackId());
+    		txtResult.appendText("\n" + t1.getTrackId() + " " + t1.getName() + " " + t1.getComposer());
+    	}
     }
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
-
+    	//TODO CONTROLLI
+    	Genre g = cmbGenere.getValue();
+    	int min = Integer.parseInt(txtMin.getText());
+    	int max = Integer.parseInt(txtMax.getText());
+    	String s = model.creaGrafo(g.getName(), min, max);
+    	txtResult.setText(s);
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
@@ -70,6 +84,7 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	cmbGenere.getItems().addAll(model.getGenre());
     }
 
 }
